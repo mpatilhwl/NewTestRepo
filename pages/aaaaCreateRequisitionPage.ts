@@ -3,8 +3,8 @@ import { Page, Locator } from '@playwright/test';
 export class CreateRequisitionPage {
   readonly page: Page;
   
-  // User profile and navigation
-  readonly userProfileDropdown: Locator;
+  // Navigation elements
+  readonly alliedAndNursingLink: Locator;
   readonly apAndPhysicianOption: Locator;
   readonly requisitionsLink: Locator;
   readonly createRequisitionLink: Locator;
@@ -47,6 +47,8 @@ export class CreateRequisitionPage {
   readonly startTimeTextbox: Locator;
   readonly endTimeTextbox: Locator;
   readonly shiftCountTextbox: Locator;
+  readonly startTimeOption: Locator;
+  readonly endTimeOption: Locator;
   readonly rateTypeDropdown: Locator;
   readonly weekdayHourlyFixedOption: Locator;
   readonly day2Cell: Locator;
@@ -57,8 +59,8 @@ export class CreateRequisitionPage {
   constructor(page: Page) {
     this.page = page;
     
-    // Initialize locators based on your exact code
-    this.userProfileDropdown = page.locator('.nice-select.select-box.add-select.input__field.input__field--hoshi.custom-select');
+    // Initialize locators
+    this.alliedAndNursingLink = page.getByText('Allied and Nursing Allied');
     this.apAndPhysicianOption = page.getByRole('listitem').filter({ hasText: 'AP and Physician' });
     this.requisitionsLink = page.getByRole('link', { name: 'Requisitions' });
     this.createRequisitionLink = page.getByRole('link', { name: 'Create Requisition' });
@@ -78,7 +80,7 @@ export class CreateRequisitionPage {
     this.day31Link = page.getByRole('link', { name: '31' });
     
     this.selectContractTypeLink = page.getByRole('link', { name: 'Select Contract Type *' });
-    this.contractTypeCheckbox = page.locator('#contTypeSel_235');
+    this.contractTypeCheckbox = page.locator('#contTypeSel_227');
     this.okButton = page.getByRole('button', { name: 'Ok' });
     
     this.fmlaDropdown = page.locator('div').filter({ hasText: /^FMLAFull-Time VacancyPart timeProgram ConversionVacation Coverage$/ });
@@ -93,7 +95,9 @@ export class CreateRequisitionPage {
     this.startTimeTextbox = page.getByRole('textbox', { name: 'Start Time' });
     this.endTimeTextbox = page.getByRole('textbox', { name: 'End Time' });
     this.shiftCountTextbox = page.getByRole('textbox', { name: 'Shift Count' });
-    this.rateTypeDropdown = page.locator('#fixedRateTypePhySpan');
+    this.startTimeOption = page.getByText(':00');
+    this.endTimeOption = page.getByText('18:00');
+    this.rateTypeDropdown = page.getByRole('cell', { name: 'Day-13 Holiday-Hourly Holiday-Hourly-Fixed OnCall-Holiday OnCall-Weekday Rate Range W-END-New WD-Night WE-Night-Oncall Weekday-Daily Weekday-Hourly-Fixed Weekday-Hourly-Range Weekend-Hourly-Fixed Weekend-Hourly-RR WeekEnd-OnCall Daily-Weekday-Diff Daily-Weekday-Mult-Weekday-Daily Hourly-DepD Hourly-DepM OnCall-Weekend Weekday-Hourly-Differential Weekday-Hourly-Multiplier Weekend-Evening Select Rate Type', exact: true }).locator('div');
     this.weekdayHourlyFixedOption = page.getByRole('listitem').filter({ hasText: 'Weekday-Hourly-Fixed' });
     this.day2Cell = page.getByRole('cell', { name: '2', exact: true }).getByRole('link');
     this.day4Cell = page.getByRole('cell', { name: '4', exact: true }).getByRole('link');
@@ -101,27 +105,15 @@ export class CreateRequisitionPage {
     this.broadcastLink = page.getByRole('link', { name: 'Broadcast' });
   }
 
-  /**
-   * Navigate to login page
-   */
-  async navigateToLoginPage(url: string) {
-    await this.page.goto(url);
-  }
-
-  /**
-   * Select user profile and navigate to requisitions
-   */
-  async selectUserProfileAndNavigate() {
-    await this.userProfileDropdown.click();
+  // Navigation methods
+  async navigateToCreateRequisition() {
+    await this.alliedAndNursingLink.click();
     await this.apAndPhysicianOption.click();
-    await this.page.waitForTimeout(5000);
     await this.requisitionsLink.click();
     await this.createRequisitionLink.click();
   }
 
-  /**
-   * Select hospital and department
-   */
+  // Hospital and department selection
   async selectHospitalAndDepartment() {
     await this.hospitalDropdown.click();
     await this.adventHealthOption.click();
@@ -129,17 +121,13 @@ export class CreateRequisitionPage {
     await this.cardiologyOption.click();
   }
 
-  /**
-   * Select position (Cardiologist)
-   */
+  // Position selection
   async selectPosition() {
     await this.anesthesiologistButton.click();
     await this.cardiologistOption.click();
   }
 
-  /**
-   * Set contract dates (1st to 31st)
-   */
+  // Date selection
   async setContractDates() {
     await this.contractStartDate.click();
     await this.requisitionNumber.click();
@@ -148,101 +136,69 @@ export class CreateRequisitionPage {
     await this.day31Link.click();
   }
 
-  /**
-   * Select contract type
-   */
+  // Contract type selection
   async selectContractType() {
     await this.selectContractTypeLink.click();
     await this.contractTypeCheckbox.check();
     await this.okButton.click();
   }
 
-  /**
-   * Select FMLA option
-   */
+  // FMLA selection
   async selectFMLA() {
     await this.fmlaDropdown.click();
     await this.fmlaOption.click();
   }
 
-  /**
-   * Navigate to next step
-   */
+  // Navigate through steps
   async proceedToNextStep() {
     await this.nextButton.click();
   }
 
-  /**
-   * Select all options and proceed
-   */
   async selectAllAndProceed() {
     await this.selectAllCheckbox.check();
     await this.nextButton.click();
   }
 
-  /**
-   * Configure orientation value
-   */
+  // Orientation configuration
   async configureOrientation(value: string = '10') {
     await this.orientationValueField.click();
     await this.orientationValueField.fill(value);
     await this.orientationValueField.press('Tab');
   }
 
-  /**
-   * Add template with time and shift details
-   */
+  // Template configuration
   async addTemplate(startTime: string = '10', endTime: string = '18', shiftCount: string = '5') {
     await this.addTemplatesLink.click();
     await this.startTimeTextbox.click();
     await this.startTimeTextbox.fill(startTime);
+    await this.startTimeOption.click();
     await this.endTimeTextbox.click();
     await this.endTimeTextbox.fill(endTime);
+    await this.endTimeOption.click();
     await this.shiftCountTextbox.click();
     await this.shiftCountTextbox.fill(shiftCount);
   }
 
-  /**
-   * Select rate type
-   */
   async selectRateType() {
     await this.rateTypeDropdown.click();
     await this.weekdayHourlyFixedOption.click();
   }
 
-  /**
-   * Select specific days (2nd and 4th)
-   */
   async selectDays() {
     await this.day2Cell.click();
     await this.day4Cell.click();
   }
 
-  /**
-   * Create schedule and broadcast
-   */
   async createScheduleAndBroadcast() {
     await this.createScheduleLink.click();
     await this.broadcastLink.click();
+    await new Promise(resolve => setTimeout(resolve, 5000)); // Wait for broadcast to complete
   }
 
-  /**
-   * Navigate to home page
-   */
-  async navigateToHome() {
-    await this.page.goto('https://qa2.hwlmsp.com');
-  }
-
-  /**
-   * Complete end-to-end requisition creation workflow
-   */
-  async createCompleteRequisition(
-    startTime: string = '10',
-    endTime: string = '18',
-    shiftCount: string = '5',
-    orientationValue: string = '10'
-  ) {
-    await this.selectUserProfileAndNavigate();
+  // Complete workflow method
+  async createCompleteRequisition(appUrl: string) {
+    await this.page.goto(appUrl);
+    await this.navigateToCreateRequisition();
     await this.selectHospitalAndDepartment();
     await this.selectPosition();
     await this.setContractDates();
@@ -250,12 +206,16 @@ export class CreateRequisitionPage {
     await this.selectFMLA();
     await this.proceedToNextStep();
     await this.selectAllAndProceed();
-    await this.configureOrientation(orientationValue);
+    await this.configureOrientation();
     await this.proceedToNextStep();
-    await this.addTemplate(startTime, endTime, shiftCount);
+    await this.addTemplate();
     await this.selectRateType();
     await this.selectDays();
     await this.createScheduleAndBroadcast();
-    await this.navigateToHome();
+  }
+
+  // Navigate to requisition home
+  async navigateToRequisitionHome() {
+    await this.page.goto('https://qa2.hwlmsp.com/shiftrock/requisitionLocum/requisitionHome?stateHidFilter=&hospHidFilter=&deptHidFilter=&classHidFilter=&statusHidFilter=Open&requisitionFilter=&clinHidFilter=&taskOrderHidFilter=&fillStatusHidFilter=&refReqStartHidFilter=&reqStartDaysHidFilter=60&reqCoordinatoridFilter=&countReqIds=&sortField=created&sortOrder=&isItGoFilter=&mspContractFilter=&reqCloseFilter=&rejectFilter=&offset=');
   }
 }
