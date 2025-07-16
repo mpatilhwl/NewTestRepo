@@ -32,7 +32,8 @@ export class LoginPage {
 
   async waitForUserProfile() {
     await this.page.waitForTimeout(5000);
-  }
+    return this.page;
+    }
 
   async clickUserProfile() {
     await this.userProfileText.click();
