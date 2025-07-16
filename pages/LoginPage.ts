@@ -17,8 +17,8 @@ export class LoginPage {
     this.logoutLink = page.getByRole('link', { name: 'Log out' });
   }
 
-  async navigateToLoginPage() {
-    await this.page.goto('https://qa1.hwlmsp.com');
+  async navigateToLoginPage(url: string) {
+    await this.page.goto(url);
   }
 
   async fillLoginCredentials(username: string, password: string) {
@@ -46,8 +46,8 @@ export class LoginPage {
     await this.logoutLink.click();
   }
 
-  async performLogin(username: string, password: string) {
-    await this.navigateToLoginPage();
+  async performLogin(username: string, password: string, url: string) {
+    await this.navigateToLoginPage(url);
     await this.fillLoginCredentials(username, password);
     await this.clickLoginButton();
     await this.waitForUserProfile();

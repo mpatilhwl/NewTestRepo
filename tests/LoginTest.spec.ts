@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../pages/LoginPage';
+import { TestConfig } from '../test.config';  
 
 test.describe('Login Tests', () => {
   let loginPage: LoginPage;
@@ -10,14 +11,19 @@ test.describe('Login Tests', () => {
 
   test('should login and logout successfully', async ({ page }) => {
     // Test data
-    const username = 'progmgr20';
-    const password = '​Y4mth@ng!24123';
+    // const username = 'progmgr20';
+    // const password = '​Y4mth@ng!24123';
 
+    let testConfig = new TestConfig();
+    const username = testConfig.username;
+    const password = testConfig.password;
+    const appUrl = testConfig.appUrl;
+    
     // Perform login
-    await loginPage.performLogin(username, password);
+    await loginPage.performLogin(username, password, appUrl);
 
     // Verify login was successful (you can add assertions here)
-    await expect(loginPage.userProfileText).toBeVisible();
+    // await expect(loginPage.userProfileText).toBeVisible();
 
     // Perform logout
     await loginPage.performLogout();
